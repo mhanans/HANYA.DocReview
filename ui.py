@@ -83,7 +83,7 @@ with gr.Blocks() as demo:
         inputs=[username_input, password_input],
         outputs=[user_id_state, login_status, main_tab, tab_state]
     ).then(
-        lambda x: gr.update(selected=x),
+        lambda tab: gr.update(selected=tab),
         inputs=tab_state,
         outputs=tabs
     )
@@ -93,7 +93,7 @@ with gr.Blocks() as demo:
         inputs=[username_input, password_input],
         outputs=[user_id_state, login_status, main_tab, tab_state]
     ).then(
-        lambda x: gr.update(selected=x),
+        lambda tab: gr.update(selected=tab),
         inputs=tab_state,
         outputs=tabs
     )
