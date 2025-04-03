@@ -1,4 +1,4 @@
-from database import Config, Session, select
+from database import Config, Session, select, engine
 
 def save_criteria(user_id: str, criteria: str):
     with Session(engine) as session:
