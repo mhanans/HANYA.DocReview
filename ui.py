@@ -10,12 +10,12 @@ user_id_state = gr.State()
 def login(username: str, password: str):
     user_id = login_user(username, password)
     if user_id:
-        return user_id, "Login berhasil!", True, "main-tab"  # Mengembalikan True untuk visibilitas dan pilih tab "Main"
-    return None, "Login gagal. Periksa username atau password.", False, "login-tab"
+        return user_id, "Login berhasil!", gr.update(visible=True), "main-tab"
+    return None, "Login gagal. Periksa username atau password.", gr.update(visible=False), "login-tab"
 
 def register(username: str, password: str):
     user_id = register_user(username, password)
-    return user_id, f"Pengguna {username} berhasil dibuat!", True, "main-tab"
+    return user_id, f"Pengguna {username} berhasil dibuat!", gr.update(visible=True), "main-tab"
 
 def save_config(user_id: str, criteria: str):
     if not user_id:
@@ -56,19 +56,7 @@ with gr.Blocks() as demo:
             login_btn = gr.Button("Login")
             register_btn = gr.Button("Register")
             login_status = gr.Textbox(label="Status", interactive=False)
-            login_btn.click(
-                login,
-                inputs=[username_input, password_input],
-                outputs=[user_id_state, login_status, gr.State(), tab_state],
-                _js="() => {document.querySelector('#main-tab').style.display = 'block'; return []}"  # Menampilkan tab Main via JS
-            )
-            register_btn.click(
-                register,
-                inputs=[username_input, password_input],
-                outputs=[user_id_state, login_status, gr.State(), tab_state],
-                _js="() => {document.querySelector('#main-tab').style.display = 'block'; return []}"
-            )
-
+        
         with gr.Tab("Main", id="main-tab", visible=False) as main_tab:
             with gr.Tab("Config"):
                 criteria_input = gr.Textbox(label="Masukkan Kriteria Review")
@@ -79,7 +67,6 @@ with gr.Blocks() as demo:
                     inputs=[user_id_state, criteria_input],
                     outputs=config_status
                 )
-
             with gr.Tab("Action"):
                 pdf_input = gr.File(label="Unggah PDF")
                 review_btn = gr.Button("Review")
@@ -90,21 +77,25 @@ with gr.Blocks() as demo:
                     outputs=review_output
                 )
 
-    # Update tab selection dan visibilitas
-    def update_tab_visibility(selected_tab):
-        return gr.update(selected=selected_tab)
-
+    # Event handler untuk login dan register
     login_btn.click(
-        update_tab_visibility,
+        login,
+        inputs=[username_input, password_input],
+        outputs=[user_id_state, login_status, main_tab, tab_state]
+    ).then(
+        lambda x: gr.update(selected=x),
         inputs=tab_state,
-        outputs=tabs,
-        _js="() => {document.querySelector('#main-tab').style.display = 'block'; return []}"
+        outputs=tabs
     )
+
     register_btn.click(
-        update_tab_visibility,
+        register,
+        inputs=[username_input, password_input],
+        outputs=[user_id_state, login_status, main_tab, tab_state]
+    ).then(
+        lambda x: gr.update(selected=x),
         inputs=tab_state,
-        outputs=tabs,
-        _js="() => {document.querySelector('#main-tab').style.display = 'block'; return []}"
+        outputs=tabs
     )
 
 demo.launch()
