@@ -26,10 +26,9 @@ class Config(Base):
     user_id = Column(String, nullable=False)
     criteria = Column(String, nullable=False)
 
-# Membuat tabel di database jika belum ada
+# Membuat tabel di database
 Base.metadata.create_all(engine)
 
-# Ekspor komponen untuk digunakan di modul lain
-__all__ = ["User", "Config", "Session", "engine", "select"]
-
+# Ekspor komponen
 from sqlalchemy import select
+__all__ = ["User", "Config", "Session", "engine", "select"]
