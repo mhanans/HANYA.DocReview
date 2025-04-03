@@ -1,6 +1,7 @@
 import pdfplumber
 
-def extract_text_from_pdf(pdf_path):
+def extract_text_from_pdf(pdf_path: str) -> dict:
+    """Mengekstrak teks dari PDF per halaman."""
     text_per_page = {}
     with pdfplumber.open(pdf_path) as pdf:
         for i, page in enumerate(pdf.pages):

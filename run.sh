@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Fungsi untuk memeriksa spasi di path
-check_path_for_spaces() {
-    if [[ $PWD =~ \  ]]; then
-        echo "Path saat ini mengandung spasi, yang dapat menyebabkan masalah. Silakan ubah path Anda."
-        exit 1
-    fi
-}
-
 # Fungsi untuk menginstal Miniconda
 install_miniconda() {
     local sys_arch=$(uname -m)
@@ -52,18 +44,10 @@ activate_conda_env() {
     echo "Environment Conda diaktifkan di $CONDA_PREFIX"
 }
 
-# Fungsi untuk menonaktifkan environment Conda
-deactivate_conda_env() {
-    if [ "$CONDA_PREFIX" == "$ENV_DIR" ]; then
-        conda deactivate
-        echo "Environment Conda dinonaktifkan di $ENV_DIR"
-    fi
-}
-
 # Fungsi untuk menginstal dependensi
 install_dependencies() {
-    echo "Menginstal dependensi dari requirements.txt..."
-    pip install -r requirements.txt || {
+    echo "Menginstal dependensi..."
+    pip install gradio pdfplumber sqlalchemy || {
         echo "Gagal menginstal dependensi."
         exit 1
     }
@@ -105,11 +89,3 @@ echo "******************************************************"
 echo "Menjalankan aplikasi"
 echo "******************************************************"
 launch_app
-
-echo "******************************************************"
-echo "Membersihkan"
-echo "******************************************************"
-deactivate_conda_env
-
-echo "Penyelesaian setup dan eksekusi. Tekan enter untuk keluar."
-read -p ""

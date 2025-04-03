@@ -1,29 +1,35 @@
 from sqlalchemy import create_engine, Column, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import uuid
 
-# Membuat engine untuk koneksi ke database SQLite
+# Koneksi ke database SQLite
 engine = create_engine("sqlite:///app.db", echo=True)
 
-# Membuat base class untuk model
+# Base class untuk model
 Base = declarative_base()
 
-# Membuat session factory
+# Factory untuk membuat sesi database
 Session = sessionmaker(bind=engine)
 
-# Definisi model User
+# Model User
 class User(Base):
     __tablename__ = "users"
-    
-    id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+
+# Model Config
+class Config(Base):
+    __tablename__ = "configs"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, nullable=False)
+    criteria = Column(String, nullable=False)
 
 # Membuat tabel di database jika belum ada
 Base.metadata.create_all(engine)
 
-# Mengekspor komponen yang akan digunakan di modul lain
-__all__ = ["User", "Session", "engine", "select"]
+# Ekspor komponen untuk digunakan di modul lain
+__all__ = ["User", "Config", "Session", "engine", "select"]
 
-# Jika Anda menggunakan SQLAlchemy 2.0+, Anda juga perlu mengimpor select
 from sqlalchemy import select
